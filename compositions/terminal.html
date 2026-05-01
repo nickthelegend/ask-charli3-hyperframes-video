@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      body, html { margin: 0; padding: 0; width: 1920px; height: 1080px; background: transparent; overflow: hidden; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; }
+      
+      .terminal-root { position: relative; width: 1920px; height: 1080px; display: flex; align-items: center; justify-content: center; background: transparent; overflow: hidden; }
+      
+      .terminal {
+        width: 1400px; height: 800px;
+        background: rgba(0, 0, 0, 0.98);
+        border: 1px solid rgba(255, 153, 0, 0.4);
+        border-radius: 12px;
+        box-shadow: 0 50px 100px rgba(0,0,0,0.9), 0 0 40px rgba(255,153,0,0.1);
+        display: flex; flex-direction: column;
+        overflow: hidden;
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      
+      .header {
+        height: 40px; background: rgba(255, 255, 255, 0.05);
+        display: flex; align-items: center; padding: 0 15px; gap: 8px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+      }
+      .dot { width: 12px; height: 12px; border-radius: 50%; }
+      .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
+      .title { color: #888; font-size: 14px; margin-left: 10px; font-family: 'Outfit', sans-serif; }
+      
+      .viewport { flex: 1; padding: 40px; position: relative; overflow: hidden; }
+      .scroll-content { position: absolute; top: 40px; left: 40px; width: calc(100% - 80px); color: #FF9900; font-size: 20px; line-height: 1.4; white-space: pre; text-shadow: 0 0 10px rgba(255,153,0,0.3); }
+      
+      .prompt-line { color: #fff; margin-bottom: 25px; font-size: 26px; }
+      .prompt { color: #FF9900; font-weight: bold; }
+      .cursor { width: 12px; height: 26px; background: #FF9900; display: inline-block; vertical-align: middle; box-shadow: 0 0 10px #FF9900; }
+      
+      .label-overlay {
+        position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+        font-family: 'Outfit', sans-serif; font-size: 70px; font-weight: 900; color: #fff;
+        text-shadow: 0 0 40px rgba(255,153,0,0.5); z-index: 100; opacity: 0;
+      }
+      
+      .vignette { position: absolute; inset: 0; background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.8) 100%); pointer-events: none; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  </head>
+  <body>
+    <div class="terminal-root clip" id="t-root" data-composition-id="terminal" data-width="1920" data-height="1080" data-start="0" data-duration="21.0">
+      <div class="vignette"></div>
+      <div class="label-overlay" id="label">Deploying skills...</div>
+      
+      <div class="terminal" id="terminal">
+        <div class="header">
+          <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+          <div class="title">antigravity — charli3-sdk — 1920×1080</div>
+        </div>
+        <div class="viewport">
+          <div class="scroll-content" id="scroller">
+            <div class="prompt-line"><span class="prompt">D:\Project\help></span> <span id="command"></span><span class="cursor" id="cursor"></span></div>
+            <div id="output" style="opacity: 0;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines = window.__timelines || {};
+      window.__timelines["terminal"] = tl;
+
+      const outputText = `███████╗██╗  ██╗██╗██╗     ██╗     ███████╗
+██╔════╝██║ ██╔╝██║██║     ██║     ██╔════╝
+███████╗█████╔╝ ██║██║     ██║     ███████╗
+╚════██║██╔═██╗ ██║██║     ██║     ╚════██║
+███████║██║  ██╗██║███████╗███████╗███████║
+╚══════╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚══════╝
+
+T   skills
+|
+o  Source: https://github.com/nickthelegend/charli3-skills.git
+|
+o  Repository cloned
+|
+o  Found 11 skills
+|
+•  Installing all 11 skills
+|
+o  45 agents
+|
+•  Installing to: Antigravity, Gemini CLI, Kiro CLI, OpenCode
+
+|
+o  Installation Summary -----------------------------------------------+
+|                                                                      |
+|  .\\.agents\\skills\\aiken-integration                                  |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlink → Kiro CLI                                                |
+|                                                                      |
+|  .\\.agents\\skills\\charli3-overview                                   |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlink → Kiro CLI                                                |
+|                                                                      |
+|  .\\.agents\\skills\\defi-integrations                                  |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlink → Kiro CLI                                                |
+|                                                                      |
+|  .\\.agents\\skills\\governance-and-economics                           |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlink → Kiro CLI                                                |
+|                                                                      |
+|  .\\.agents\\skills\\hackathon-resources                                |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlink → Kiro CLI                                                |
+|                                                                      |
+|  .\\.agents\\skills\\offchain-tools                                     |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlink → Kiro CLI                                                |
+|                                                                      |
+|  .\\.agents\\skills\\oracle-cheatsheet                                  |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlink → Kiro CLI                                                |
+|                                                                      |
+|  .\\.agents\\skills\\pull-oracle                                        |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlink → Kiro CLI                                                |
+|                                                                      |
+|  .\\.agents\\skills\\push-oracle                                        |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlink → Kiro CLI                                                |
+|                                                                      |
+|  .\\.agents\\skills\\real-world-settlements                             |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlink → Kiro CLI                                                |
+|                                                                      |
+|  .\\.agents\\skills\\substrate-and-partner-chain                        |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlink → Kiro CLI                                                |
+|                                                                      |
++----------------------------------------------------------------------+
+|
+o  Installation complete
+
+|
+o  Installed 11 skills ------------------------------------------------+
+|                                                                      |
+|  ✓ .\\.agents\\skills\\aiken-integration                                |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlinked: Kiro CLI                                               |
+|  ✓ .\\.agents\\skills\\charli3-overview                                 |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlinked: Kiro CLI                                               |
+|  ✓ .\\.agents\\skills\\defi-integrations                                |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlinked: Kiro CLI                                               |
+|  ✓ .\\.agents\\skills\\governance-and-economics                         |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlinked: Kiro CLI                                               |
+|  ✓ .\\.agents\\skills\\hackathon-resources                              |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlinked: Kiro CLI                                               |
+|  ✓ .\\.agents\\skills\\offchain-tools                                   |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlinked: Kiro CLI                                               |
+|  ✓ .\\.agents\\skills\\oracle-cheatsheet                                |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlinked: Kiro CLI                                               |
+|  ✓ .\\.agents\\skills\\pull-oracle                                      |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlinked: Kiro CLI                                               |
+|  ✓ .\\.agents\\skills\\push-oracle                                      |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlinked: Kiro CLI                                               |
+|  ✓ .\\.agents\\skills\\real-world-settlements                           |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlinked: Kiro CLI                                               |
+|  ✓ .\\.agents\\skills\\substrate-and-partner-chain                      |
+|    universal: Antigravity, Gemini CLI, OpenCode, Amp, Cline +7 more  |
+|    symlinked: Kiro CLI                                               |
+|                                                                      |
++----------------------------------------------------------------------+
+
+|
+—  Done!  Review skills before use; they run with full agent permissions.`;
+
+      tl.to("#label", { opacity: 1, y: -20, duration: 1 }, 0.1);
+      tl.to("#terminal", { opacity: 1, scale: 1, duration: 0.8, ease: "back.out" }, 0.5);
+      // Flicker effect
+      tl.to("#terminal", { opacity: 0.7, duration: 0.05, repeat: 3, yoyo: true }, 0.6);
+      
+      const cmd = "npx skills add -y https://github.com/nickthelegend/charli3-skills";
+      const cmdEl = document.getElementById('command');
+      
+      // Typing animation
+      for(let i=0; i<=cmd.length; i++) {
+        tl.to({}, { 
+          onStart: () => { cmdEl.textContent = cmd.slice(0, i); },
+          duration: 0.04 
+        }, 1.0 + (i * 0.04));
+      }
+      
+      // Execute and show output
+      tl.to("#cursor", { display: "none" }, 4.5);
+      tl.to("#output", { opacity: 1, duration: 0.1 }, 4.6);
+      
+      const lines = outputText.split('\n');
+      const outputEl = document.getElementById('output');
+      
+      // Line by line reveal with scrolling
+      lines.forEach((line, i) => {
+        tl.to({}, {
+          onStart: () => {
+            const div = document.createElement('div');
+            div.textContent = line;
+            outputEl.appendChild(div);
+            
+            const scroller = document.getElementById('scroller');
+            const height = scroller.offsetHeight;
+            if (height > 650) {
+              gsap.to(scroller, { top: 690 - height, duration: 0.15, ease: "none" });
+            }
+          },
+          duration: 0.08
+        }, 4.7 + (i * 0.1));
+      });
+      
+      tl.to("#terminal", { filter: "blur(40px)", opacity: 0, duration: 1.5 }, 20);
+      tl.set("#terminal", { visibility: "hidden" }, 21);
+      tl.to("#label", { opacity: 0, duration: 1.5 }, 20);
+      tl.set("#label", { visibility: "hidden" }, 21);
+
+      tl.to({}, { duration: 21 }, 0);
+    </script>
+  </body>
+</html>

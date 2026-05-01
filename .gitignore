@@ -1,0 +1,7 @@
+ffmpeg.exe
+output.mp4
+renders/
+.kiro/
+*.mp4
+node_modules/
+.DS_Store

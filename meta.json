@@ -1,0 +1,10 @@
+{
+  "name": "ask-charli3-skills",
+  "description": "Launch video for Charli3 Oracle AI Agent Skills. Highlighting ease of integration via npx skills.",
+  "duration": 30.0,
+  "resolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "fps": 30
+}

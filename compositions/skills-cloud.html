@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      body, html { margin: 0; padding: 0; width: 1920px; height: 1080px; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; color: white; font-family: 'Outfit', sans-serif; }
+      
+      #skills-container { position: relative; width: 1920px; height: 1080px; background: transparent; overflow: hidden; }
+      
+      .center-content {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        text-align: center; z-index: 10; width: 100%;
+      }
+      
+      .center-text { font-size: 80px; font-weight: 900; text-align: center; opacity: 0; transform: scale(0.9); }
+      .highlight { color: #FF9900; text-shadow: 0 0 30px rgba(255, 153, 0, 0.5); }
+      
+      .node {
+        position: absolute; width: 220px; height: 250px;
+        background: rgba(255, 153, 0, 0.08);
+        border: 1px solid rgba(255, 153, 0, 0.4);
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        text-align: center; padding: 20px; box-sizing: border-box;
+        opacity: 0; transform: scale(0);
+        backdrop-filter: blur(10px);
+        box-shadow: inset 0 0 40px rgba(255, 153, 0, 0.1);
+      }
+      .node-title { font-size: 18px; font-weight: 900; color: #FF9900; margin-bottom: 5px; text-transform: uppercase; }
+      
+      .connector {
+        position: absolute; height: 2px; background: linear-gradient(90deg, transparent, rgba(255, 153, 0, 0.3), transparent);
+        transform-origin: left center; pointer-events: none; opacity: 0;
+      }
+      
+      .background-pulse {
+        position: absolute; inset: 0;
+        background: radial-gradient(circle at center, rgba(255, 153, 0, 0.05) 0%, transparent 70%);
+        opacity: 0;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  </head>
+  <body>
+    <div id="skills-container" class="clip" data-composition-id="skills-cloud" data-width="1920" data-height="1080" data-start="0" data-duration="8.0">
+      <div class="background-pulse" id="pulse"></div>
+      <div class="center-content">
+        <div class="center-text" id="center"><span class="highlight">Charli3 Oracle Skills.</span><br>Add intelligence to any agent.</div>
+      </div>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines = window.__timelines || {};
+      window.__timelines["skills-cloud"] = tl;
+
+      const skills = [
+        "Pull Oracle", "Push Oracle", "Aiken", "DeFi", "RWA", "Governance", "Scaling", "Off-chain", "Security", "SDKs"
+      ];
+
+      const container = document.getElementById('skills-container') || document.querySelector('.clip[data-composition-id="skills-cloud"]');
+      const nodes = [];
+
+      if (container) {
+        tl.to("#pulse", { opacity: 1, duration: 2 }, 0);
+        
+        skills.forEach((s, i) => {
+          const node = document.createElement('div');
+          node.className = 'node';
+          node.innerHTML = `<div class="node-title">${s}</div>`;
+          
+          const angle = (i / skills.length) * Math.PI * 2;
+          const radius = 400;
+          const x = Math.cos(angle) * radius + 1920/2;
+          const y = Math.sin(angle) * radius + 1080/2;
+          
+          node.style.left = `${x - 110}px`;
+          node.style.top = `${y - 125}px`;
+          
+          container.appendChild(node);
+          nodes.push({ el: node, x, y });
+
+          tl.to(node, { opacity: 1, scale: 0.9, duration: 1.2, ease: "back.out(1.7)" }, 0.1 + (i * 0.1));
+          
+          // Connect to center
+          const connector = document.createElement('div');
+          connector.className = 'connector';
+          const dist = radius - 100;
+          connector.style.width = `${dist}px`;
+          connector.style.left = `${1920/2}px`;
+          connector.style.top = `${1080/2}px`;
+          connector.style.transform = `rotate(${angle}rad)`;
+          container.appendChild(connector);
+          
+          tl.to(connector, { opacity: 1, duration: 1 }, 0.5 + (i * 0.1));
+        });
+      }
+
+      tl.to("#center", { opacity: 1, scale: 1, duration: 1.5, ease: "power4.out" }, 0.5);
+      
+      // Floating motion
+      tl.to("#skills-container", { rotate: 5, duration: 8, ease: "sine.inOut" }, 0);
+      tl.to("#skills-container", { opacity: 0, duration: 1 }, 7);
+      tl.set("#center", { visibility: "hidden" }, 8);
+
+      tl.to({}, { duration: 8 }, 0);
+    </script>
+  </body>
+</html>

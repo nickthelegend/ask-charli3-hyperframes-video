@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ask Charli3 Skills — The Real Deal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      body, html {
+        margin: 0; padding: 0;
+        width: 1920px; height: 1080px;
+        background: #000; overflow: hidden;
+        font-family: 'Outfit', sans-serif;
+      }
+      #master-root { width: 1920px; height: 1080px; position: relative; }
+      [data-composition-id="master"] > div[data-composition-id] {
+        position: absolute; inset: 0;
+      }
+      
+      /* Overlay Captions */
+      .caption-overlay {
+        position: absolute;
+        bottom: 80px;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        z-index: 1000;
+        pointer-events: none;
+      }
+      .caption-text {
+        display: inline-block;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(20px);
+        padding: 20px 60px;
+        border-radius: 100px;
+        color: white;
+        font-size: 48px;
+        font-weight: 700;
+        border: 1px solid rgba(255, 153, 0, 0.4);
+        box-shadow: 0 0 50px rgba(255, 153, 0, 0.1);
+        opacity: 0;
+        transform: translateY(30px);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="master-root"
+      data-composition-id="master"
+      data-width="1920"
+      data-height="1080"
+      data-start="0"
+      data-duration="40.0"
+    >
+      <!-- BEAT 1: The Real Deal (0.00-9.00) -->
+      <div
+        id="c-intro"
+        data-composition-id="intro"
+        data-composition-src="compositions/intro.html"
+        data-start="0"
+        data-duration="9.0"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+
+      <!-- BEAT 2: Skills Done (8.00-16.00) -->
+      <div
+        id="c-skills"
+        data-composition-id="skills-cloud"
+        data-composition-src="compositions/skills-cloud.html"
+        data-start="8.0"
+        data-duration="8.0"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+
+      <!-- BEAT 3: Terminal Installation (15.00-36.00) -->
+      <div
+        id="c-terminal"
+        data-composition-id="terminal"
+        data-composition-src="compositions/terminal.html"
+        data-start="15.0"
+        data-duration="21.0"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+
+      <!-- BEAT 4: Outro (35.00-40.00) -->
+      <div
+        id="c-outro"
+        data-composition-id="outro"
+        data-composition-src="compositions/outro.html"
+        data-start="35.0"
+        data-duration="5.0"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+
+      <!-- Captions Layer -->
+      <div class="caption-overlay">
+        <div id="caption" class="caption-text"></div>
+      </div>
+
+      <script>
+        const masterTL = gsap.timeline({ paused: true });
+        window.__timelines = window.__timelines || {};
+        window.__timelines["master"] = masterTL;
+
+        const captions = [
+          { start: 0.5, end: 4.0, text: "Building on Cardano?" },
+          { start: 4.0, end: 8.5, text: "You need the real deal." },
+          { start: 9.0, end: 12.0, text: "Charli3 Oracle Skills." },
+          { start: 12.0, end: 15.5, text: "Add intelligence to any agent." },
+          { start: 16.0, end: 19.5, text: "Deploying skills..." },
+          { start: 20.0, end: 25.0, text: "npx skills add charli3-skills" },
+          { start: 35.0, end: 40.0, text: "Charli3. Ask Charlie." }
+        ];
+
+        captions.forEach(cap => {
+          masterTL.to("#caption", { 
+            opacity: 1, 
+            y: 0, 
+            duration: 0.6, 
+            ease: "power3.out",
+            overwrite: "auto",
+            onStart: () => document.getElementById("caption").textContent = cap.text 
+          }, cap.start);
+          masterTL.to("#caption", { 
+            opacity: 0, 
+            y: -20, 
+            duration: 0.6,
+            ease: "power3.in",
+            overwrite: "auto"
+          }, cap.end - 0.6);
+          masterTL.set("#caption", { opacity: 0, visibility: "hidden" }, cap.end);
+        });
+      </script>
+    </div>
+  </body>
+</html>

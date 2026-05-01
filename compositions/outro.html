@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      body, html { margin: 0; padding: 0; width: 1920px; height: 1080px; background: #000; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-family: 'Outfit', sans-serif; }
+      
+      #canvas { position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; }
+      
+      .logo-container { width: 300px; height: 300px; position: relative; margin-bottom: 60px; }
+      .logo-hex { 
+        width: 100%; height: 100%; background: #FF9900; 
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 0 100px rgba(255, 153, 0, 0.4);
+      }
+      .logo-text { font-size: 120px; font-weight: 900; color: #000; }
+      
+      .title { font-size: 100px; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 20px; opacity: 0; transform: translateY(30px); }
+      .subtitle { font-size: 40px; color: #FF9900; opacity: 0; transform: translateY(30px); }
+      
+      .particle { position: absolute; background: #FF9900; border-radius: 50%; opacity: 0.3; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  </head>
+  <body>
+    <div id="outro-canvas" class="clip" data-composition-id="outro" data-width="1920" data-height="1080" data-start="0" data-duration="5.0">
+      <div class="logo-container" id="logo">
+        <div class="logo-hex"><div class="logo-text">C3</div></div>
+      </div>
+      <div class="title" id="title">Charli3.</div>
+      <div class="subtitle" id="subtitle">Ask Charlie.</div>
+    </div>
+    <script>
+      // Seeded PRNG for determinism
+      function createRandom(seed) {
+        return function() {
+          let t = seed += 0x6D2B79F5;
+          t = Math.imul(t ^ t >>> 15, t | 1);
+          t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+          return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        }
+      }
+      const random = createRandom(789);
+
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines = window.__timelines || {};
+      window.__timelines["outro"] = tl;
+
+      tl.to("#outro-canvas", { opacity: 1, duration: 1 }, 0);
+      tl.from("#logo", { scale: 0.5, opacity: 0, rotate: -45, duration: 1.5, ease: "back.out(1.7)" }, 0.2);
+      tl.to("#title", { opacity: 1, y: 0, duration: 1, ease: "power4.out" }, 0.8);
+      tl.to("#subtitle", { opacity: 1, y: 0, duration: 1, ease: "power4.out" }, 1.2);
+      
+      // Floating particles
+      const outroCanvas = document.getElementById('outro-canvas') || document.querySelector('.clip[data-composition-id="outro"]');
+      if (outroCanvas) {
+        for(let i=0; i<40; i++) {
+          const p = document.createElement('div');
+          p.className = 'particle';
+          const size = random() * 6 + 2;
+          p.style.width = size + 'px';
+          p.style.height = size + 'px';
+          p.style.left = random() * 100 + '%';
+          p.style.top = random() * 100 + '%';
+          outroCanvas.appendChild(p);
+          
+          tl.to(p, { 
+            y: (random() - 0.5) * 200, 
+            x: (random() - 0.5) * 200, 
+            opacity: 0, 
+            duration: 3 + random() * 2, 
+            ease: "none" 
+          }, 0);
+        }
+      }
+      
+      tl.to({}, { duration: 5 }, 0);
+      tl.set("#title", { visibility: "hidden" }, 5);
+      tl.set("#subtitle", { visibility: "hidden" }, 5);
+      tl.set("#logo", { visibility: "hidden" }, 5);
+    </script>
+  </body>
+</html>
